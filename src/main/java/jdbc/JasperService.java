@@ -38,6 +38,24 @@ public class JasperService {
         JasperExportManager.exportReportToPdfStream(print, outputStream);
     }
 
+    public void abrirJasper(String jasperFile, Connection connection) throws JRException {
+        //Abre relatórios já compilados .jasper
+        InputStream is = getClass().getClassLoader().getResourceAsStream(jasperFile);
+        JasperPrint print = JasperFillManager.fillReport(is,params,connection);
+        JasperViewer viewer = new JasperViewer(print);
+        viewer.setVisible(true);
+    }
+
+    public void abrirJrxmlComSubReport(String masterJrxml, String subJrxml,Connection connection) throws JRException {
+        JasperReport subReport = this.compilejrxml(subJrxml); //Compilando o sub
+        this.params.put("SUB_JASPER_PARAM", subReport); //O master já espera por um report
+
+        JasperReport masterReport = this.compilejrxml(masterJrxml); //Compilando o principal
+        JasperPrint print = JasperFillManager.fillReport(masterReport,params,connection);
+        JasperViewer viewer = new JasperViewer(print);
+        viewer.setVisible(true);
+    }
+
 
 
 }
